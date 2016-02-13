@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BetterWayToWeb</title>
+  <link rel="stylesheet" media="all" href="/css/Bootstrap.css"/>
+  <script src="/js/jquery.js" type="text/javascript"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+
+</head>
+
+<body>
+
+  <div class="wrapper wrap-style">
+    <div class="navbar-push container">
+      <div id="whole-navbar" class="container navbar navbar-style navbar-fixed-top" role="navigation">
+  <div class="navbar-container-style">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">YoutubeTagsRetriever</a>
+    </div>
+
+    <div class="collapse bs-navbar-collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav">
+      </ul>
+    </div>
+  </div>
+</div>
+
+      <div class="jsFlash alert alert-danger hide">
+        <button type="button" class="js-close close" >&times;</button>
+        <span id="jsFlashError"></span>
+      </div>
+      <div class="flash">
+      </div>
+
+      <script type="text/javascript">
+
+  $(document).ready(function () {
+
+    var TagGenGlobal = (function() {
+      
+        var inputMapping = {};
+
+        // This is used to convert user input text to html safe text for classes and id's.
+        function makeSafeForCSS(name) {
+          return name.replace(/[^a-z0-9]/g, function(s) {
+              var c = s.charCodeAt(0);
+              if (c == 32) return '-';
+              if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+              return '__' + ('000' + c.toString(16)).slice(-4);
+          });
+        }
+
+        return {
+          htmlSanitize: function(name) {
+            return makeSafeForCSS(name);
+          }
+        };
+      })();
+
+    // This hides the javascript Flash message instead of destroying the DOM object.
+    // This is useful for asynchronous calls that might produce multipule errors.
+    // without a page reload.
+    
+    $('.js-close').click(function() {
+      $('.jsFlash').addClass('hide');
+      return false;
+    });
+
+
+
+    $('#new_keyword').submit(function(event) {
+
+      // // Temporarily disable form
+      // $("#new_keyword").prop('disabled', true);
+
+      var inputToSend = "";
+      var userInput = $('#input').val();
+
+      // console.log("userInput:: " + userInput);
+
+      if (userInput == "") {
+        return false;
+      }
+
+      var match = RegExp('[?&]' + "v" + '=([^&]*)').exec(userInput);
+
+      if ( match  == null ) {
+        inputToSend = userInput;
+        document.getElementById('yt-results-msg').innerHTML = " This request may take up to 15 seconds...";
+      } else {
+        inputToSend = decodeURIComponent(match[1].replace(/\+/g, ' '));
+        // console.log("InputToSend:: " + inputToSend);
+      }
+
+      $('#yt-results-body').val('');
+
+      $('#yt-tag-gen-btn').prop('disabled', true);
+
+      // // Clean keyword text to be used in HTML.
+      // var keyword_html = KeywordGlobal.clean_keyword(keyword_lower);
+      var htmlInput = TagGenGlobal.htmlSanitize(inputToSend);
+
+      // Create keyword bubble.
+      var newKeyword = '<div class="keyword progress progress-striped active" ><span id="' + htmlInput +'" type="text" class="form-control progress-bar" style="border-radius: 20px; width: auto; height: auto;">' + inputToSend + '</span></div>';
+
+      // <i class="glyphicon glyphicon-remove keywordRemoveIcon"></i>
+
+      // // Clear keyword input value.
+      // $('#input').val('');
+
+      // Add keyword bubble to container.
+      $('#keywordContainer').append(newKeyword);
+
+      // // Enable form again.
+      // $("#new_keyword").prop('disabled', false);
+      return true;
+    });
+
+  });
+
+</script>
+
+
+<div class="container">
+
+
+
+</div>
+
+    <p>Tagging your YouTube videos properly is one of the first and most basic things you can do to direct traffic to those videos. YouTube is the Internet’s second largest search engine and tags are among the ranking factors. When users type keywords related to your tags your video will appear in their search results.</p>
+
+    <p>When it comes time to tag your own videos, it can be difficult to think up many descriptive tags to add. One relatively easy and effective technique used to be to check your competitor’s tags; however, recently YouTube has hidden these tags. Since this strategy is no longer easy, I’ve created a tag generator for YouTube that helps with this process.</p>
+
+    <p>There are two ways to use the tag generator. The first is to check the tags of a specific YouTube video by entering the URL. The second (and more useful in my opinion) will generate popular YouTube tags for your specific keyword. Just enter a keyword related to your video and see what your competitors are using most often for their videos!</p>
+
+    <div id="gAd-double" class="center-div-600" style="overflow: hidden; margin-bottom: 10px; height: auto;">
+      
+
+    </div>
+
+    <form accept-charset="UTF-8" action="/get-youtube-tags" class="new_keyword" style="min-height: 40px;" data-remote="true" id="new_keyword" method="get">
+      <div class="col-xs-8 col-sm-10 " style="padding-right: 0px; border-right: 1px solid #777;">
+        <input class="form-control hide" type="" name="keyword" value="">
+        <input class="form-control" id="input" name="input" placeholder="Enter Keyword or URL here..." style="height: 40px; width: 100%; border-radius: 20px 0px 0px 20px;" type="text">
+      </div>
+      <div class="col-xs-4 col-sm-2" style="padding-left: 0px;">
+        <button id="yt-tag-gen-btn" class="btn btn-primary" style="height: 40px; width: 100%; border-radius: 0px 20px 20px 0px; " type="submit">Find Tags</button>
+      </div>
+      <div id="keywordContainer" class="col-xs-10 col-xs-offset-1">
+      </div>
+    </form>
+
+    <br>
+    <br>
+    <div class="clearfix"></div>
+
+    <div id="yt-results-msg" class="field col-xs-12 yt-results-msg">
+    </div>
+
+
+    <div class="clearfix"></div>
+
+
+    <div class="field col-xs-12 yt-results-div hide">
+      <div class="form-control yt-results-body" id="yt-results-body" name="yt-results" placeholder="Results will appear here..." contenteditable>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div>
+  <style>
+  .bottom-right-popup {
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+    background-color: #3071a9;
+    color: white;
+    right: 0px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    width: 320px;
+    height: 50px;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 5px;
+    text-align: center;
+    margin-bottom: 0px;
+  }
+
+  .bottom-right-popup h4 {
+    color: #FFFFFF;
+  }
+
+  .bottom-right-popup a {
+    color: white;
+  }
+
+</style>
+
+<div class="bottom-right-popup alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <a href="/titans/new">
+    <h4 class="no-padding no-margin">Want to up your YouTube game?</h4>
+    <p>Sign up for YouTube Titan</p>
+  </a>
+</div>
+
+
+</div>
+
+</body>
+<footer>
+</footer>
+</html>
